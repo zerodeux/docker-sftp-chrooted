@@ -1,0 +1,21 @@
+# Sample file to setup a chrooted SFTP-only account in a container
+
+FROM debian:9-slim
+
+RUN apt-get update --quiet && \
+    apt-get install --quiet --no-install-recommends --yes openssh-server && \
+    addgroup --system sftp
+
+COPY sshd.init   /etc/ssh/sshd.init
+COPY sshd_config /etc/ssh/sshd_config
+
+RUN adduser --disabled-password --ingroup sftp --gecos "" alice && \
+    adduser --disabled-password --ingroup sftp --gecos "" bob && \
+    chown -R root: /home
+
+COPY alice.pub   /home/alice/.ssh/authorized_keys
+COPY bob.pub     /home/bob/.ssh/authorized_keys
+
+CMD ["/etc/ssh/sshd.init"]
+
+EXPOSE 22

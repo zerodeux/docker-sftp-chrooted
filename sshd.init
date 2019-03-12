@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+mkdir -p /run/sshd  # Required for 'privilege separation' feature
+exec /usr/sbin/sshd -D -e
